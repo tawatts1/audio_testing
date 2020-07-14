@@ -34,13 +34,15 @@ class gstring:
         m = self.lamb * self.L/(N-1)
         m_array = np.array([[m for _ in range(self.N)]]*self.dimensions).T
         shape = (int(rate*T), self.N, self.dimensions)
-        r = v = np.zeros(shape)
+        self.shape = shape
+        r = np.zeros(shape) # not r = v = np.zeros(shape) for some reason
+        v = np.zeros_like(r)
         r[0], v[0] = r0v0
         r,v = verlet(r, v, dt, self.F_sys, self.F_args, m_array)
         self.r = r
         self.v = v
         print('done calculating')
-        #return r, v
+        
     def gen_wav(self, 
                  fname, listening_ratios = [.4,.6], position_indeces = [1,1]):
         self.fname = fname
@@ -49,7 +51,7 @@ class gstring:
         write_wav(fname, self.wav_rate, 
                   self.r[::self.over_calc, li, position_indeces[0]], 
                   self.r[::self.over_calc, ri, position_indeces[1]])
-        for i in [0,N//2, 3*N//4]:
+        for i in [0,self.shape[0]//2, 3*self.shape[0]//4, -1]:
             plt.plot(self.r[i,:,0],self.r[i,:,1])
         plt.show()
     def play_wav(self):
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     k1 = 5e6
     lamb = 1.0
     L = 1
-    N = 10
+    N = 20
     pluck_x = .2
     pluck_y = 2e-3
     x0_ratio = 0.5
@@ -80,6 +82,6 @@ if __name__ == '__main__':
     gs1 = gstring(k1, lamb, L, N, 
                   F_linear, [k1, x0])
     gs1.calculate(IC, T = T)
-    gs1.gen_wav('test_new_gs.wav')
+    gs1.gen_wav('test_new_gs.wav', listening_ratios=[0.45, 0.55])
     gs1.play_wav()
     
