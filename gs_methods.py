@@ -20,7 +20,7 @@ def triangle_IC(L, N, pluck_x, pluck_y, dimensions = 2):
         else: 
             r0[j,1] = pluck_y/(1-pluck_x) * L * (1-ratio)
     v0 = np.zeros_like(r0)
-    return r0.astype('float32'), v0.astype('float32')
+    return r0, v0
     
 def scale_data(data):
     M = np.max(np.abs(data))
