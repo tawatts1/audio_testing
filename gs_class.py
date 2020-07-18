@@ -10,7 +10,7 @@ from integrators import verlet
 from energy_analysis import KE_sys_tot
 import numpy as np
 import matplotlib.pyplot as plt
-
+import time
 class GString:
     def __init__(self, 
                  spring_k, lamb, L, N,
@@ -28,6 +28,7 @@ class GString:
                   integrator = verlet, delete_v = True):
         #r0, v0 = r0v0
         print('calculating...')
+        t0 = time.time()
         self.wav_rate = wav_rate
         self.over_calc = over_calc
         rate = wav_rate*over_calc
@@ -42,6 +43,7 @@ class GString:
         r,v = integrator(r, v, dt, self.F_sys, self.F_args, m_array)
         self.r = r
         self.time = np.linspace(0,T,len(self.r))
+        print('Calculating time: ', time.time() - t0)
         plt.scatter(self.time, KE_sys_tot(v,m, particle_axis=1), s = .1)
         plt.title('Total KE over indeces')
         plt.show()
